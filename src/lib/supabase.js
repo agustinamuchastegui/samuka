@@ -16,15 +16,12 @@ export async function getAthleteData(athleteCode) {
       .select('*')
       .eq('code', athleteCode)
       .single()
-
     if (athleteError || !athlete) return null
-
     const { data: checkins } = await supabase
       .from('checkins')
       .select('*')
       .eq('athlete_id', athlete.id)
       .order('date', { ascending: true })
-
     return { athlete, checkins: checkins || [] }
   } catch (error) {
     console.error('Error:', error)
@@ -49,7 +46,6 @@ export async function saveCheckin(athleteId, energy, mood) {
         onConflict: 'athlete_id,date'
       })
       .select()
-
     return { data, error }
   } catch (error) {
     return { data: null, error }
@@ -72,7 +68,6 @@ export async function getAllAthletes() {
       `)
       .eq('active', true)
       .order('name')
-
     return athletes?.map(athlete => ({
       ...athlete,
       checkins: athlete.checkins.sort((a, b) => new Date(a.date) - new Date(b.date))
