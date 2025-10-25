@@ -76,3 +76,103 @@ export async function getAllAthletes() {
     return []
   }
 }
+
+// ===== FUNCIONES DE PIZARRA TÁCTICA =====
+
+// Guardar jugada táctica
+export async function saveTacticalPlay(playData) {
+  try {
+    const { data, error } = await supabase
+      .from('tactical_plays')
+      .insert({
+        name: playData.name,
+        players: playData.players,
+        drawings: playData.drawings,
+        formation: playData.formation || null,
+        description: playData.description || null,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error) {
+    console.error('Error saving tactical play:', error)
+    return { data: null, error }
+  }
+}
+
+// Obtener todas las jugadas tácticas
+export async function getAllTacticalPlays() {
+  try {
+    const { data, error } = await supabase
+      .from('tactical_plays')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Error fetching tactical plays:', error)
+    return []
+  }
+}
+
+// Obtener una jugada táctica por ID
+export async function getTacticalPlay(id) {
+  try {
+    const { data, error } = await supabase
+      .from('tactical_plays')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+    return data
+  } catch (error) {
+    console.error('Error fetching tactical play:', error)
+    return null
+  }
+}
+
+// Actualizar jugada táctica
+export async function updateTacticalPlay(id, playData) {
+  try {
+    const { data, error } = await supabase
+      .from('tactical_plays')
+      .update({
+        name: playData.name,
+        players: playData.players,
+        drawings: playData.drawings,
+        formation: playData.formation,
+        description: playData.description,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error) {
+    console.error('Error updating tactical play:', error)
+    return { data: null, error }
+  }
+}
+
+// Eliminar jugada táctica
+export async function deleteTacticalPlay(id) {
+  try {
+    const { error } = await supabase
+      .from('tactical_plays')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+    return { error: null }
+  } catch (error) {
+    console.error('Error deleting tactical play:', error)
+    return { error }
+  }
+}
